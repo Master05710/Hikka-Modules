@@ -18,7 +18,7 @@ class AIToolsMod(loader.Module):
         ".gpt <text> - Send a request to GPT"
         args = utils.get_args_raw(m)
         m = await utils.answer(m, self.strings("processing", m))
-        data = await aitoolsAPI.gpt(args)  # use your library to make the request
+        data = await aitoolsAPI.gpt(args)  
         await utils.answer(m, self.strings("gpt_result", m).format(args, data))
 
     @loader.owner
@@ -26,6 +26,6 @@ class AIToolsMod(loader.Module):
         ".sdxl <text> - Send a request to SDXL"
         args = utils.get_args_raw(m)
         m = await utils.answer(m, self.strings("processing", m))
-        data = await aitoolsAPI.sdxl(args)  # use your library to make the request
+        data = await aitoolsAPI.sdxl(args)  
         await utils.answer(m, self.strings("done", m))
         await m.reply(file=data, message=self.strings("sdxl_caption", m).format(args))
