@@ -1,6 +1,6 @@
+import httpx
 from telethon import types
 from .. import loader, utils  # type: ignore
-import aitoolsAPI
 
 @loader.tds
 class AIToolsMod(loader.Module):
@@ -18,14 +18,18 @@ class AIToolsMod(loader.Module):
         ".gpt <text> - Send a request to GPT"
         args = utils.get_args_raw(m)
         m = await utils.answer(m, self.strings("processing", m))
-        data = await aitoolsAPI.gpt(args)  
-        await utils.answer(m, self.strings("gpt_result", m).format(args, data))
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            resp = await client.post("https://opo.monster/private/apis/gpt", json={"prompt": args})
+            data = resp.text
+            await utils.answer(m, self.strings("gpt_result", m).format(args, data))
 
     @loader.owner
     async def sdxlcmd(self, m: types.Message):
         ".sdxl <text> - Send a request to SDXL"
         args = utils.get_args_raw(m)
         m = await utils.answer(m, self.strings("processing", m))
-        data = await aitoolsAPI.sdxl(args)  
-        await utils.answer(m, self.strings("done", m))
-        await m.reply(file=data, message=self.strings("sdxl_caption", m).format(args))
+        async with httpx.AsyncClient(timeout=120.0) as client:
+            resp = await client.post("https://opo.monster/private/apis/sdxl", json={"prompt": args})
+            data = resp.text
+            await utils.answer(m, self.strings("done", m))
+            await m.reply(file=data, message=self.strings("sdxl_caption", m).format(args))
